@@ -1,6 +1,7 @@
 .wp-block-calendar {
 	text-align: center;
-
+	// This block has customizable borders. Border-box sizing makes that more predictable.
+	box-sizing: border-box;
 	th,
 	td {
 		padding: 0.25em;
