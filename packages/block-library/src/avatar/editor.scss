@@ -1,8 +1,9 @@
 .wp-block-avatar__image img {
 	width: 100%;
 }
-
+.wp-block[data-align="center"] > .wp-block-avatar,
 .wp-block-avatar.aligncenter {
+	text-align: center;
 	.components-resizable-box__container {
 		margin: 0 auto;
 	}
