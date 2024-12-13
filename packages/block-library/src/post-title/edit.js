@@ -15,7 +15,12 @@ import {
 	HeadingLevelDropdown,
 	useBlockEditingMode,
 } from '@wordpress/block-editor';
-import { ToggleControl, TextControl, PanelBody } from '@wordpress/components';
+import {
+	ToggleControl,
+	TextControl,
+	__experimentalToolsPanel as ToolsPanel,
+	__experimentalToolsPanelItem as ToolsPanelItem,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { createBlock, getDefaultBlockName } from '@wordpress/blocks';
 import { useEntityProp, store as coreStore } from '@wordpress/core-data';
@@ -138,41 +143,80 @@ export default function PostTitleEdit( {
 						/>
 					</BlockControls>
 					<InspectorControls>
-						<PanelBody title={ __( 'Settings' ) }>
-							<ToggleControl
-								__nextHasNoMarginBottom
+						<ToolsPanel
+							label={ __( 'Settings' ) }
+							resetAll={ () => {
+								setAttributes( {
+									isLink: false, // Default to true
+									linkTarget: '_self',
+									rel: '',
+								} );
+							} }
+						>
+							<ToolsPanelItem
+								hasValue={ () => isLink }
 								label={ __( 'Make title a link' ) }
-								onChange={ () =>
-									setAttributes( { isLink: ! isLink } )
-								}
-								checked={ isLink }
-							/>
+								resetAll={ () =>
+									setAttributes( { isLink: true } )
+								} // Reset defaults to true
+							>
+								<ToggleControl
+									__nextHasNoMarginBottom
+									label={ __( 'Make title a link' ) }
+									onChange={ () =>
+										setAttributes( { isLink: ! isLink } )
+									}
+									checked={ isLink }
+								/>
+							</ToolsPanelItem>
+
 							{ isLink && (
 								<>
-									<ToggleControl
-										__nextHasNoMarginBottom
+									<ToolsPanelItem
+										hasValue={ () =>
+											linkTarget === '_blank'
+										}
 										label={ __( 'Open in new tab' ) }
-										onChange={ ( value ) =>
+										resetAll={ () =>
 											setAttributes( {
-												linkTarget: value
-													? '_blank'
-													: '_self',
+												linkTarget: '_self',
 											} )
 										}
-										checked={ linkTarget === '_blank' }
-									/>
-									<TextControl
-										__next40pxDefaultSize
-										__nextHasNoMarginBottom
+									>
+										<ToggleControl
+											__nextHasNoMarginBottom
+											label={ __( 'Open in new tab' ) }
+											onChange={ ( value ) =>
+												setAttributes( {
+													linkTarget: value
+														? '_blank'
+														: '_self',
+												} )
+											}
+											checked={ linkTarget === '_blank' }
+										/>
+									</ToolsPanelItem>
+
+									<ToolsPanelItem
+										hasValue={ () => !! rel }
 										label={ __( 'Link rel' ) }
-										value={ rel }
-										onChange={ ( newRel ) =>
-											setAttributes( { rel: newRel } )
+										resetAll={ () =>
+											setAttributes( { rel: '' } )
 										}
-									/>
+									>
+										<TextControl
+											__next40pxDefaultSize
+											__nextHasNoMarginBottom
+											label={ __( 'Link rel' ) }
+											value={ rel }
+											onChange={ ( newRel ) =>
+												setAttributes( { rel: newRel } )
+											}
+										/>
+									</ToolsPanelItem>
 								</>
 							) }
-						</PanelBody>
+						</ToolsPanel>
 					</InspectorControls>
 				</>
 			) }
