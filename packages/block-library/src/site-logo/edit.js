@@ -24,6 +24,8 @@ import {
 	Button,
 	DropZone,
 	FlexItem,
+	__experimentalToolsPanel as ToolsPanel,
+	__experimentalToolsPanelItem as ToolsPanelItem,
 	__experimentalItemGroup as ItemGroup,
 	__experimentalHStack as HStack,
 	__experimentalTruncate as Truncate,
@@ -597,8 +599,20 @@ export default function LogoEdit( {
 
 	const mediaInspectorPanel = ( canUserEdit || logoUrl ) && (
 		<InspectorControls>
-			<PanelBody title={ __( 'Media' ) }>
-				<div className="block-library-site-logo__inspector-media-replace-container">
+			<ToolsPanel
+				label={ __( 'Media' ) }
+				resetAll={ () => {
+					setAttributes( {
+						logoUrl: null,
+						mediaItemData: null,
+					} );
+				} }
+			>
+				<ToolsPanelItem
+					hasValue={ () => !! logoUrl && ! canUserEdit }
+					label={ __( 'Preview Logo (Read-only)' ) }
+					resetAll={ () => setAttributes( { logoUrl: null } ) }
+				>
 					{ ! canUserEdit && !! logoUrl && (
 						<InspectorLogoPreview
 							mediaItemData={ mediaItemData }
@@ -609,6 +623,12 @@ export default function LogoEdit( {
 							} }
 						/>
 					) }
+				</ToolsPanelItem>
+				<ToolsPanelItem
+					hasValue={ () => !! logoUrl && canUserEdit }
+					label={ __( 'Replace Logo' ) }
+					resetAll={ () => setAttributes( { logoUrl: null } ) }
+				>
 					{ canUserEdit && !! logoUrl && (
 						<SiteLogoReplaceFlow
 							{ ...mediaReplaceFlowProps }
@@ -620,6 +640,12 @@ export default function LogoEdit( {
 							popoverProps={ {} }
 						/>
 					) }
+				</ToolsPanelItem>
+				<ToolsPanelItem
+					hasValue={ () => ! logoUrl && canUserEdit }
+					label={ __( 'Upload Logo' ) }
+					resetAll={ () => setAttributes( { logoUrl: null } ) }
+				>
 					{ canUserEdit && ! logoUrl && (
 						<MediaUploadCheck>
 							<MediaUpload
@@ -644,8 +670,8 @@ export default function LogoEdit( {
 							/>
 						</MediaUploadCheck>
 					) }
-				</div>
-			</PanelBody>
+				</ToolsPanelItem>
+			</ToolsPanel>
 		</InspectorControls>
 	);
 
