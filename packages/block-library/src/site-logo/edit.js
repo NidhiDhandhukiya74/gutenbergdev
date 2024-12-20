@@ -14,7 +14,6 @@ import {
 } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
 import {
-	PanelBody,
 	RangeControl,
 	ResizableBox,
 	Spinner,
@@ -280,31 +279,55 @@ const SiteLogo = ( {
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title={ __( 'Settings' ) }>
-					<RangeControl
-						__nextHasNoMarginBottom
-						__next40pxDefaultSize
+				<ToolsPanel label={ __( 'Settings' ) }>
+					<ToolsPanelItem
+						hasValue={ () => !! width }
 						label={ __( 'Image width' ) }
-						onChange={ ( newWidth ) =>
-							setAttributes( { width: newWidth } )
+						onDeselect={ () =>
+							setAttributes( { width: undefined } )
 						}
-						min={ minWidth }
-						max={ maxWidthBuffer }
-						initialPosition={ Math.min(
-							defaultWidth,
-							maxWidthBuffer
-						) }
-						value={ width || '' }
-						disabled={ ! isResizable }
-					/>
-					<ToggleControl
-						__nextHasNoMarginBottom
+					>
+						<RangeControl
+							__nextHasNoMarginBottom
+							__next40pxDefaultSize
+							label={ __( 'Image width' ) }
+							onChange={ ( newWidth ) =>
+								setAttributes( { width: newWidth } )
+							}
+							min={ minWidth }
+							max={ maxWidthBuffer }
+							initialPosition={ Math.min(
+								defaultWidth,
+								maxWidthBuffer
+							) }
+							value={ width || '' }
+							disabled={ ! isResizable }
+						/>
+					</ToolsPanelItem>
+
+					<ToolsPanelItem
+						hasValue={ () => !! isLink }
 						label={ __( 'Link image to home' ) }
-						onChange={ () => setAttributes( { isLink: ! isLink } ) }
-						checked={ isLink }
-					/>
+						onDeselect={ () => setAttributes( { isLink: false } ) }
+					>
+						<ToggleControl
+							__nextHasNoMarginBottom
+							label={ __( 'Link image to home' ) }
+							onChange={ () =>
+								setAttributes( { isLink: ! isLink } )
+							}
+							checked={ isLink }
+						/>
+					</ToolsPanelItem>
+
 					{ isLink && (
-						<>
+						<ToolsPanelItem
+							hasValue={ () => linkTarget === '_blank' }
+							label={ __( 'Open in new tab' ) }
+							onDeselect={ () =>
+								setAttributes( { linkTarget: '_self' } )
+							}
+						>
 							<ToggleControl
 								__nextHasNoMarginBottom
 								label={ __( 'Open in new tab' ) }
@@ -315,10 +338,18 @@ const SiteLogo = ( {
 								}
 								checked={ linkTarget === '_blank' }
 							/>
-						</>
+						</ToolsPanelItem>
 					) }
+
 					{ canUserEdit && (
-						<>
+						<ToolsPanelItem
+							hasValue={ () => !! shouldSyncIcon }
+							label={ __( 'Use as Site Icon' ) }
+							onDeselect={ () => {
+								setAttributes( { shouldSyncIcon: false } );
+								setIcon( undefined );
+							} }
+						>
 							<ToggleControl
 								__nextHasNoMarginBottom
 								label={ __( 'Use as Site Icon' ) }
@@ -329,9 +360,9 @@ const SiteLogo = ( {
 								checked={ !! shouldSyncIcon }
 								help={ syncSiteIconHelpText }
 							/>
-						</>
+						</ToolsPanelItem>
 					) }
-				</PanelBody>
+				</ToolsPanel>
 			</InspectorControls>
 			<BlockControls group="block">
 				{ canEditImage && ! isEditingImage && (
