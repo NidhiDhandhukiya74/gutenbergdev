@@ -2,6 +2,7 @@
  * WordPress dependencies
  */
 import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
+import { useEffect } from '@wordpress/element';
 import {
 	Disabled,
 	RangeControl,
@@ -31,8 +32,48 @@ const MIN_COMMENTS = 1;
 const MAX_COMMENTS = 100;
 
 export default function LatestComments( { attributes, setAttributes } ) {
-	const { commentsToShow, displayAvatar, displayDate, displayExcerpt } =
-		attributes;
+	const {
+		commentsToShow,
+		displayAvatar,
+		displayDate,
+		displayExcerpt,
+		style,
+	} = attributes;
+
+	const typographyStyles = {
+		fontSize: style?.typography?.fontSize || undefined,
+		lineHeight: style?.typography?.lineHeight || undefined,
+		fontFamily: style?.typography?.__experimentalFontFamily || undefined,
+		fontWeight: style?.typography?.__experimentalFontWeight || undefined,
+		fontStyle: style?.typography?.__experimentalFontStyle || undefined,
+		textTransform:
+			style?.typography?.__experimentalTextTransform || undefined,
+		textDecoration:
+			style?.typography?.__experimentalTextDecoration || undefined,
+		letterSpacing:
+			style?.typography?.__experimentalLetterSpacing || undefined,
+	};
+
+	const blockProps = useBlockProps( {
+		style: typographyStyles, // Apply styles to the parent block
+	} );
+
+	useEffect( () => {
+		// Apply typography styles to the <ol> element after the content is rendered
+		const applyTypographyStyles = () => {
+			const olElement = document.querySelector(
+				'.wp-block-latest-comments ol'
+			);
+			if ( olElement ) {
+				Object.assign( olElement.style, typographyStyles );
+			}
+		};
+
+		// Apply styles initially
+		applyTypographyStyles();
+
+		// The server-side render will trigger the re-apply after content is rendered
+	}, [ typographyStyles ] );
 
 	const serverSideAttributes = {
 		...attributes,
@@ -45,7 +86,7 @@ export default function LatestComments( { attributes, setAttributes } ) {
 	const dropdownMenuProps = useToolsPanelDropdownMenuProps();
 
 	return (
-		<div { ...useBlockProps() }>
+		<div { ...blockProps }>
 			<InspectorControls>
 				<ToolsPanel
 					label={ __( 'Settings' ) }
@@ -148,6 +189,15 @@ export default function LatestComments( { attributes, setAttributes } ) {
 					// the block appears on the frontend. Setting the locale
 					// explicitly prevents any middleware from setting it to 'user'.
 					urlQueryArgs={ { _locale: 'site' } }
+					onRender={ () => {
+						// This function is called whenever the ServerSideRender completes rendering
+						const olElement = document.querySelector(
+							'.wp-block-latest-comments ol'
+						);
+						if ( olElement ) {
+							Object.assign( olElement.style, typographyStyles );
+						}
+					} }
 				/>
 			</Disabled>
 		</div>
