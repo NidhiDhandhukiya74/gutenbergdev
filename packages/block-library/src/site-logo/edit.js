@@ -23,6 +23,7 @@ import {
 	Button,
 	DropZone,
 	FlexItem,
+	PanelBody,
 	__experimentalToolsPanel as ToolsPanel,
 	__experimentalToolsPanelItem as ToolsPanelItem,
 	__experimentalItemGroup as ItemGroup,
@@ -48,6 +49,7 @@ import { store as noticesStore } from '@wordpress/notices';
  * Internal dependencies
  */
 import { MIN_SIZE } from '../image/constants';
+import { useToolsPanelDropdownMenuProps } from '../utils/hooks';
 
 const ALLOWED_MEDIA_TYPES = [ 'image' ];
 const ACCEPT_MEDIA_STRING = 'image/*';
@@ -71,6 +73,7 @@ const SiteLogo = ( {
 	const [ { naturalWidth, naturalHeight }, setNaturalSize ] = useState( {} );
 	const [ isEditingImage, setIsEditingImage ] = useState( false );
 	const { toggleSelection } = useDispatch( blockEditorStore );
+	const dropdownMenuProps = useToolsPanelDropdownMenuProps();
 	const { imageEditing, maxWidth, title } = useSelect( ( select ) => {
 		const settings = select( blockEditorStore ).getSettings();
 		const siteEntities = select( coreStore ).getEntityRecord(
@@ -279,11 +282,13 @@ const SiteLogo = ( {
 			<InspectorControls>
 				<ToolsPanel label={ __( 'Settings' ) }>
 					<ToolsPanelItem
+						isShownByDefault
 						hasValue={ () => !! width }
 						label={ __( 'Image width' ) }
 						onDeselect={ () =>
 							setAttributes( { width: undefined } )
 						}
+						dropdownMenuProps={ dropdownMenuProps }
 					>
 						<RangeControl
 							__nextHasNoMarginBottom
@@ -304,6 +309,7 @@ const SiteLogo = ( {
 					</ToolsPanelItem>
 
 					<ToolsPanelItem
+						isShownByDefault
 						hasValue={ () => !! isLink }
 						label={ __( 'Link image to home' ) }
 						onDeselect={ () => setAttributes( { isLink: false } ) }
@@ -320,6 +326,7 @@ const SiteLogo = ( {
 
 					{ isLink && (
 						<ToolsPanelItem
+							isShownByDefault
 							hasValue={ () => linkTarget === '_blank' }
 							label={ __( 'Open in new tab' ) }
 							onDeselect={ () =>
@@ -341,6 +348,7 @@ const SiteLogo = ( {
 
 					{ canUserEdit && (
 						<ToolsPanelItem
+							isShownByDefault
 							hasValue={ () => !! shouldSyncIcon }
 							label={ __( 'Use as Site Icon' ) }
 							onDeselect={ () => {
@@ -664,7 +672,7 @@ export default function LogoEdit( {
 							<DropZone onFilesDrop={ onFilesDrop } />
 						</>
 					) }
-					</div>
+				</div>
 			</PanelBody>
 		</InspectorControls>
 	);
