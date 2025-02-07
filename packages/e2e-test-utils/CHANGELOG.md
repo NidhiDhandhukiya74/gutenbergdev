@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 11.17.0 (2025-01-29)
+
+## 11.16.0 (2025-01-15)
+
+## 11.15.0 (2025-01-02)
+
 ## 11.14.0 (2024-12-11)
 
 ## 11.13.0 (2024-11-27)
@@ -209,7 +215,7 @@
 
 ### Enhancements
 
--   `visitAdminPage` will now throw an error (emit a test failure) when there are unexpected errors on hte page.
+-   `visitAdminPage` will now throw an error (emit a test failure) when there are unexpected errors on the page.
 
 ### New Features
 

@@ -34,7 +34,7 @@ export function setCurrentTemplateId( id ) {
 /**
  * Create a block based template.
  *
- * @param {Object?} template Template to create and assign.
+ * @param {?Object} template Template to create and assign.
  */
 export const createTemplate =
 	( template ) =>
@@ -388,7 +388,7 @@ export const removeTemplates =
 			} )
 		);
 
-		// If all the promises were fulfilled with sucess.
+		// If all the promises were fulfilled with success.
 		if ( promiseResult.every( ( { status } ) => status === 'fulfilled' ) ) {
 			let successMessage;
 

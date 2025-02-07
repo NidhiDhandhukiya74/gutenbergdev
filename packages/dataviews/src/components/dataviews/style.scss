@@ -18,8 +18,10 @@
 	flex-shrink: 0;
 	position: sticky;
 	left: 0;
-	transition: padding ease-out 0.1s;
-	@include reduce-motion( "transition" );
+
+	@media not (prefers-reduced-motion) {
+		transition: padding ease-out 0.1s;
+	}
 }
 
 .dataviews-no-results,
@@ -29,11 +31,12 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	transition: padding ease-out 0.1s;
-	@include reduce-motion( "transition" );
+
+	@media not (prefers-reduced-motion) {
+		transition: padding ease-out 0.1s;
+	}
 }
 
-/* stylelint-disable-next-line scss/at-rule-no-unknown -- '@container' not globally permitted */
 @container (max-width: 430px) {
 	.dataviews__view-actions,
 	.dataviews-filters__container {

@@ -9,20 +9,21 @@ import clsx from 'clsx';
 import { NEW_TAB_TARGET, NOFOLLOW_REL } from './constants';
 import { getUpdatedLinkAttributes } from './get-updated-link-attributes';
 import removeAnchorTag from '../utils/remove-anchor-tag';
+import { useToolsPanelDropdownMenuProps } from '../utils/hooks';
 
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useEffect, useState, useRef, useMemo } from '@wordpress/element';
 import {
-	Button,
-	ButtonGroup,
 	TextControl,
 	ToolbarButton,
 	Popover,
 	__experimentalToolsPanel as ToolsPanel,
 	__experimentalToolsPanelItem as ToolsPanelItem,
+	__experimentalToggleGroupControl as ToggleGroupControl,
+	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
 import {
 	AlignmentControl,
@@ -38,6 +39,8 @@ import {
 	__experimentalGetElementClassName,
 	store as blockEditorStore,
 	useBlockEditingMode,
+	getTypographyClassesAndStyles as useTypographyProps,
+	useSettings,
 } from '@wordpress/block-editor';
 import { displayShortcut, isKeyboardEvent, ENTER } from '@wordpress/keycodes';
 import { link, linkOff } from '@wordpress/icons';
@@ -115,46 +118,45 @@ function useEnter( props ) {
 }
 
 function WidthPanel( { selectedWidth, setAttributes } ) {
-	function handleChange( newWidth ) {
-		// Check if we are toggling the width off
-		const width = selectedWidth === newWidth ? undefined : newWidth;
-
-		// Update attributes.
-		setAttributes( { width } );
-	}
+	const dropdownMenuProps = useToolsPanelDropdownMenuProps();
 
 	return (
 		<ToolsPanel
 			label={ __( 'Settings' ) }
-			resetAll={ () => {
-				handleChange( undefined );
-			} }
+			resetAll={ () => setAttributes( { width: undefined } ) }
+			dropdownMenuProps={ dropdownMenuProps }
 		>
 			<ToolsPanelItem
-				label={ __( 'Button width' ) }
-				__nextHasNoMarginBottom
+				label={ __( 'Width' ) }
 				isShownByDefault
 				hasValue={ () => !! selectedWidth }
-				onDeselect={ () => handleChange( undefined ) }
+				onDeselect={ () => setAttributes( { width: undefined } ) }
+				__nextHasNoMarginBottom
 			>
-				<ButtonGroup aria-label={ __( 'Button width' ) }>
+				<ToggleGroupControl
+					label={ __( 'Width' ) }
+					value={ selectedWidth }
+					onChange={ ( newWidth ) =>
+						setAttributes( { width: newWidth } )
+					}
+					isBlock
+					__next40pxDefaultSize
+					__nextHasNoMarginBottom
+				>
 					{ [ 25, 50, 75, 100 ].map( ( widthValue ) => {
 						return (
-							<Button
+							<ToggleGroupControlOption
 								key={ widthValue }
-								size="small"
-								variant={
-									widthValue === selectedWidth
-										? 'primary'
-										: undefined
-								}
-								onClick={ () => handleChange( widthValue ) }
-							>
-								{ widthValue }%
-							</Button>
+								value={ widthValue }
+								label={ sprintf(
+									/* translators: Percentage value. */
+									__( '%d%%' ),
+									widthValue
+								) }
+							/>
 						);
 					} ) }
-				</ButtonGroup>
+				</ToggleGroupControl>
 			</ToolsPanelItem>
 		</ToolsPanel>
 	);
@@ -270,6 +272,19 @@ function ButtonEdit( props ) {
 		[ context, isSelected, metadata?.bindings?.url ]
 	);
 
+	const [ fluidTypographySettings, layout ] = useSettings(
+		'typography.fluid',
+		'layout'
+	);
+	const typographyProps = useTypographyProps( attributes, {
+		typography: {
+			fluid: fluidTypographySettings,
+		},
+		layout: {
+			wideSize: layout?.wideSize,
+		},
+	} );
+
 	return (
 		<>
 			<div
@@ -277,7 +292,6 @@ function ButtonEdit( props ) {
 				className={ clsx( blockProps.className, {
 					[ `has-custom-width wp-block-button__width-${ width }` ]:
 						width,
-					[ `has-custom-font-size` ]: blockProps.style.fontSize,
 				} ) }
 			>
 				<RichText
@@ -296,11 +310,14 @@ function ButtonEdit( props ) {
 						'wp-block-button__link',
 						colorProps.className,
 						borderProps.className,
+						typographyProps.className,
 						{
 							[ `has-text-align-${ textAlign }` ]: textAlign,
 							// For backwards compatibility add style that isn't
 							// provided via block support.
 							'no-border-radius': style?.border?.radius === 0,
+							[ `has-custom-font-size` ]:
+								blockProps.style.fontSize,
 						},
 						__experimentalGetElementClassName( 'button' )
 					) }
@@ -309,6 +326,8 @@ function ButtonEdit( props ) {
 						...colorProps.style,
 						...spacingProps.style,
 						...shadowProps.style,
+						...typographyProps.style,
+						writingMode: undefined,
 					} }
 					onReplace={ onReplace }
 					onMerge={ mergeBlocks }

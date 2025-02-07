@@ -615,10 +615,10 @@ class WP_Theme_JSON_Gutenberg {
 	 * @var string[]
 	 */
 	const BLOCK_SUPPORT_FEATURE_LEVEL_SELECTORS = array(
-		'border'     => 'border',
-		'color'      => 'color',
-		'spacing'    => 'spacing',
-		'typography' => 'typography',
+		'__experimentalBorder' => 'border',
+		'color'                => 'color',
+		'spacing'              => 'spacing',
+		'typography'           => 'typography',
 	);
 
 	/**
@@ -3413,11 +3413,13 @@ class WP_Theme_JSON_Gutenberg {
 
 			return true;
 		}
+
+		return false;
 	}
 
 	/**
 	 * Returns the default slugs for all the presets in an associative array
-	 * whose keys are the preset paths and the leafs is the list of slugs.
+	 * whose keys are the preset paths and the leaves is the list of slugs.
 	 *
 	 * For example:
 	 *

@@ -75,6 +75,8 @@ function ButtonTrigger< Item >( {
 		<Button
 			label={ label }
 			icon={ action.icon }
+			disabled={ !! action.disabled }
+			accessibleWhenDisabled
 			isDestructive={ action.isDestructive }
 			size="compact"
 			onClick={ onClick }
@@ -90,7 +92,7 @@ function MenuItemTrigger< Item >( {
 	const label =
 		typeof action.label === 'string' ? action.label : action.label( items );
 	return (
-		<Menu.Item onClick={ onClick }>
+		<Menu.Item disabled={ action.disabled } onClick={ onClick }>
 			<Menu.ItemLabel>{ label }</Menu.ItemLabel>
 		</Menu.Item>
 	);
@@ -145,13 +147,6 @@ export function ActionsMenuGroup< Item >( {
 	);
 }
 
-function hasOnlyOneActionAndIsPrimary< Item >(
-	primaryActions: Action< Item >[],
-	actions: Action< Item >[]
-) {
-	return primaryActions.length === 1 && actions.length === 1;
-}
-
 export default function ItemActions< Item >( {
 	item,
 	actions,
@@ -184,7 +179,8 @@ export default function ItemActions< Item >( {
 		);
 	}
 
-	if ( hasOnlyOneActionAndIsPrimary( primaryActions, actions ) ) {
+	// If all actions are primary, there is no need to render the dropdown.
+	if ( primaryActions.length === eligibleActions.length ) {
 		return (
 			<PrimaryActions
 				item={ item }
@@ -229,25 +225,27 @@ function CompactItemActions< Item >( {
 	);
 	return (
 		<>
-			<Menu
-				trigger={
-					<Button
-						size={ isSmall ? 'small' : 'compact' }
-						icon={ moreVertical }
-						label={ __( 'Actions' ) }
-						accessibleWhenDisabled
-						disabled={ ! actions.length }
-						className="dataviews-all-actions-button"
-					/>
-				}
-				placement="bottom-end"
-			>
-				<ActionsMenuGroup
-					actions={ actions }
-					item={ item }
-					registry={ registry }
-					setActiveModalAction={ setActiveModalAction }
+			<Menu placement="bottom-end">
+				<Menu.TriggerButton
+					render={
+						<Button
+							size={ isSmall ? 'small' : 'compact' }
+							icon={ moreVertical }
+							label={ __( 'Actions' ) }
+							accessibleWhenDisabled
+							disabled={ ! actions.length }
+							className="dataviews-all-actions-button"
+						/>
+					}
 				/>
+				<Menu.Popover>
+					<ActionsMenuGroup
+						actions={ actions }
+						item={ item }
+						registry={ registry }
+						setActiveModalAction={ setActiveModalAction }
+					/>
+				</Menu.Popover>
 			</Menu>
 			{ !! activeModalAction && (
 				<ActionModal

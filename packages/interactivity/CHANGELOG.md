@@ -2,6 +2,24 @@
 
 ## Unreleased
 
+## 6.17.0 (2025-01-29)
+
+## 6.16.0 (2025-01-15)
+
+### Bug Fixes
+
+-   Fix the logic path that merges plain objects ([#68579](https://github.com/WordPress/gutenberg/pull/68579)).
+
+## 6.15.0 (2025-01-02)
+
+### Enhancements
+
+-   Allow more iterables to be used in each directives ([#67798](https://github.com/WordPress/gutenberg/pull/67798)).
+
+### Bug Fixes
+
+-   Fix an error when the value used in an each directive is not iterable ([#67798](https://github.com/WordPress/gutenberg/pull/67798)).
+
 ## 6.14.0 (2024-12-11)
 
 ## 6.13.0 (2024-11-27)

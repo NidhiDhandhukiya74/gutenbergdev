@@ -34,8 +34,6 @@ import {
 	BlockControls,
 	InspectorControls,
 	MediaPlaceholder,
-	MediaUpload,
-	MediaUploadCheck,
 	MediaReplaceFlow,
 	useBlockProps,
 	store as blockEditorStore,
@@ -380,29 +378,24 @@ const SiteLogo = ( {
 
 // This is a light wrapper around MediaReplaceFlow because the block has two
 // different MediaReplaceFlows, one for the inspector and one for the toolbar.
-function SiteLogoReplaceFlow( {
-	mediaURL,
-	onRemoveLogo,
-	...mediaReplaceProps
-} ) {
+function SiteLogoReplaceFlow( { mediaURL, ...mediaReplaceProps } ) {
 	return (
 		<MediaReplaceFlow
 			{ ...mediaReplaceProps }
 			mediaURL={ mediaURL }
 			allowedTypes={ ALLOWED_MEDIA_TYPES }
 			accept={ ACCEPT_MEDIA_STRING }
-			onReset={ onRemoveLogo }
 		/>
 	);
 }
 
-const InspectorLogoPreview = ( { mediaItemData = {}, itemGroupProps } ) => {
+const InspectorLogoPreview = ( { media, itemGroupProps } ) => {
 	const {
 		alt_text: alt,
 		source_url: logoUrl,
 		slug: logoSlug,
 		media_details: logoMediaDetails,
-	} = mediaItemData;
+	} = media ?? {};
 	const logoLabel = logoMediaDetails?.sizes?.full?.file || logoSlug;
 	return (
 		<ItemGroup { ...itemGroupProps } as="span">
@@ -539,6 +532,11 @@ export default function LogoEdit( {
 	};
 
 	const onFilesDrop = ( filesList ) => {
+		if ( filesList?.length > 1 ) {
+			onUploadError( __( 'Only one image can be used as a site logo.' ) );
+			return;
+		}
+
 		getSettings().mediaUpload( {
 			allowedTypes: ALLOWED_MEDIA_TYPES,
 			filesList,
@@ -550,7 +548,6 @@ export default function LogoEdit( {
 				onInitialSelectLogo( image );
 			},
 			onError: onUploadError,
-			onRemoveLogo,
 		} );
 	};
 
@@ -559,7 +556,7 @@ export default function LogoEdit( {
 		name: ! logoUrl ? __( 'Choose logo' ) : __( 'Replace' ),
 		onSelect: onSelectLogo,
 		onError: onUploadError,
-		onRemoveLogo,
+		onReset: onRemoveLogo,
 	};
 	const controls = canUserEdit && (
 		<BlockControls group="other">
@@ -630,79 +627,45 @@ export default function LogoEdit( {
 
 	const mediaInspectorPanel = ( canUserEdit || logoUrl ) && (
 		<InspectorControls>
-			<ToolsPanel
-				label={ __( 'Media' ) }
-				resetAll={ () => {
-					setAttributes( {
-						logoUrl: null,
-						mediaItemData: null,
-					} );
-				} }
-			>
-				<ToolsPanelItem
-					hasValue={ () => !! logoUrl && ! canUserEdit }
-					label={ __( 'Preview Logo (Read-only)' ) }
-					resetAll={ () => setAttributes( { logoUrl: null } ) }
-				>
-					{ ! canUserEdit && !! logoUrl && (
+			<PanelBody title={ __( 'Media' ) }>
+				<div className="block-library-site-logo__inspector-media-replace-container">
+					{ ! canUserEdit ? (
 						<InspectorLogoPreview
-							mediaItemData={ mediaItemData }
+							media={ mediaItemData }
 							itemGroupProps={ {
 								isBordered: true,
 								className:
 									'block-library-site-logo__inspector-readonly-logo-preview',
 							} }
 						/>
-					) }
-				</ToolsPanelItem>
-				<ToolsPanelItem
-					hasValue={ () => !! logoUrl && canUserEdit }
-					label={ __( 'Replace Logo' ) }
-					resetAll={ () => setAttributes( { logoUrl: null } ) }
-				>
-					{ canUserEdit && !! logoUrl && (
-						<SiteLogoReplaceFlow
-							{ ...mediaReplaceFlowProps }
-							name={
-								<InspectorLogoPreview
-									mediaItemData={ mediaItemData }
-								/>
-							}
-							popoverProps={ {} }
-						/>
-					) }
-				</ToolsPanelItem>
-				<ToolsPanelItem
-					hasValue={ () => ! logoUrl && canUserEdit }
-					label={ __( 'Upload Logo' ) }
-					resetAll={ () => setAttributes( { logoUrl: null } ) }
-				>
-					{ canUserEdit && ! logoUrl && (
-						<MediaUploadCheck>
-							<MediaUpload
-								onSelect={ onInitialSelectLogo }
-								allowedTypes={ ALLOWED_MEDIA_TYPES }
-								render={ ( { open } ) => (
-									<div className="block-library-site-logo__inspector-upload-container">
-										<Button
-											__next40pxDefaultSize
-											onClick={ open }
-											variant="secondary"
-										>
-											{ isLoading ? (
-												<Spinner />
-											) : (
-												__( 'Choose logo' )
-											) }
-										</Button>
-										<DropZone onFilesDrop={ onFilesDrop } />
-									</div>
+					) : (
+						<>
+							<SiteLogoReplaceFlow
+								{ ...mediaReplaceFlowProps }
+								name={
+									!! logoUrl ? (
+										<InspectorLogoPreview
+											media={ mediaItemData }
+										/>
+									) : (
+										__( 'Choose logo' )
+									)
+								}
+								renderToggle={ ( props ) => (
+									<Button { ...props } __next40pxDefaultSize>
+										{ temporaryURL ? (
+											<Spinner />
+										) : (
+											props.children
+										) }
+									</Button>
 								) }
 							/>
-						</MediaUploadCheck>
+							<DropZone onFilesDrop={ onFilesDrop } />
+						</>
 					) }
-				</ToolsPanelItem>
-			</ToolsPanel>
+					</div>
+			</PanelBody>
 		</InspectorControls>
 	);
 

@@ -272,6 +272,7 @@ test.describe( 'Pages', () => {
 
 		// Create new page that has the default template so as to swap it.
 		await draftNewPage( page );
+		await page.locator( 'role=button[name="Block Inserter"i]' ).click();
 		await editor.openDocumentSettingsSidebar();
 		const templateOptionsButton = page
 			.getByRole( 'region', { name: 'Editor settings' } )
@@ -280,7 +281,7 @@ test.describe( 'Pages', () => {
 		await templateOptionsButton.click();
 		await page
 			.getByRole( 'menu', { name: 'Template options' } )
-			.getByText( 'Swap template' )
+			.getByText( 'Change template' )
 			.click();
 		const templateItem = page.locator(
 			'.block-editor-block-patterns-list__item-title'
@@ -294,6 +295,7 @@ test.describe( 'Pages', () => {
 		} );
 
 		// Now reset, and apply the default template back.
+		await editor.openDocumentSettingsSidebar();
 		await templateOptionsButton.click();
 		const resetButton = page
 			.getByRole( 'menu', { name: 'Template options' } )
@@ -303,11 +305,12 @@ test.describe( 'Pages', () => {
 		await expect( templateOptionsButton ).toHaveText( 'Single Entries' );
 	} );
 
-	test( 'swap template options should respect the declared `postTypes`', async ( {
+	test( 'change template options should respect the declared `postTypes`', async ( {
 		page,
 		editor,
 	} ) => {
 		await draftNewPage( page );
+		await page.locator( 'role=button[name="Block Inserter"i]' ).click();
 		await editor.openDocumentSettingsSidebar();
 		const templateOptionsButton = page
 			.getByRole( 'region', { name: 'Editor settings' } )
@@ -318,7 +321,7 @@ test.describe( 'Pages', () => {
 		await expect(
 			page
 				.getByRole( 'menu', { name: 'Template options' } )
-				.getByText( 'Swap template' )
+				.getByText( 'Change template' )
 		).toHaveCount( 0 );
 	} );
 } );

@@ -13,10 +13,10 @@ const {
 } = require( './cli' );
 const {
 	getJestOverrideConfigFile,
-	getWebpackArgs,
-	getWordPressSrcDirectory,
-	getWebpackEntryPoints,
 	getPhpFilePaths,
+	getProjectSourcePath,
+	getWebpackArgs,
+	getWebpackEntryPoints,
 	hasBabelConfig,
 	hasCssnanoConfig,
 	hasJestConfig,
@@ -29,7 +29,6 @@ const {
 	getBlockJsonModuleFields,
 	getBlockJsonScriptFields,
 } = require( './block-json' );
-const { PhpFilePathsPlugin } = require( './php-file-paths-plugin' );
 
 module.exports = {
 	fromProjectRoot,
@@ -41,10 +40,10 @@ module.exports = {
 	getJestOverrideConfigFile,
 	getNodeArgsFromCLI,
 	getPackageProp,
-	getWebpackArgs,
-	getWordPressSrcDirectory,
-	getWebpackEntryPoints,
 	getPhpFilePaths,
+	getProjectSourcePath,
+	getWebpackArgs,
+	getWebpackEntryPoints,
 	getBlockJsonModuleFields,
 	getBlockJsonScriptFields,
 	hasArgInCLI,
@@ -56,6 +55,5 @@ module.exports = {
 	hasPostCSSConfig,
 	hasPrettierConfig,
 	hasProjectFile,
-	PhpFilePathsPlugin,
 	spawnScript,
 };

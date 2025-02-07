@@ -4,9 +4,17 @@
 
 .page-patterns-preview-field {
 	display: flex;
+	justify-content: center;
+	align-items: center;
 	flex-direction: column;
 	height: 100%;
 	border-radius: $radius-medium;
+
+	.dataviews-view-grid & {
+		.block-editor-block-preview__container {
+			height: 100%;
+		}
+	}
 
 	.dataviews-view-table & {
 		width: 96px;
@@ -26,9 +34,11 @@
 	top: 0;
 	z-index: 2;
 	flex-shrink: 0;
-	transition: padding ease-out 0.1s;
-	@include reduce-motion("transition");
 	min-height: $grid-unit-50;
+
+	@media not (prefers-reduced-motion) {
+		transition: padding ease-out 0.1s;
+	}
 
 	.edit-site-patterns__title {
 		min-height: $grid-unit-50;
@@ -92,7 +102,6 @@
 	}
 }
 
-/* stylelint-disable-next-line scss/at-rule-no-unknown -- '@container' not globally permitted */
 @container (max-width: 430px) {
 	.edit-site-page-patterns-dataviews .edit-site-patterns__section-header {
 		padding-left: $grid-unit-30;

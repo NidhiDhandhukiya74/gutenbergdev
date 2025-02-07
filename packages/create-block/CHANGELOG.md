@@ -2,6 +2,22 @@
 
 ## Unreleased
 
+## 4.60.0 (2025-01-29)
+
+## 4.59.0 (2025-01-15)
+
+## 4.58.0 (2025-01-02)
+
+### Enhancement
+
+-   Add support for custom `textdomain` property for the scaffolded block ([#57197](https://github.com/WordPress/gutenberg/pull/57197)).
+-   Allow external templates to customize additional plugin header and readme fields: "Requires at least", "Requires PHP", and "Tested up to" ([#68193](https://github.com/WordPress/gutenberg/pull/68193))
+-   Update the default template to scaffold a block in its subfolder to make it easier to update to multiple blocks in a single plugin ([#68175](https://github.com/WordPress/gutenberg/pull/68175)).
+
+### Internal
+
+-   Refactored the code to use new API introduced together with `@inquirer/prompts` instead of legacy `inquirer` package ([#67877](https://github.com/WordPress/gutenberg/pull/67877)).
+
 ## 4.57.0 (2024-12-11)
 
 ### Internal
@@ -468,7 +484,7 @@
 
 ### Internal
 
--   Relocated npm packge from `create-wordpress-block` to `@wordpress/create-block` ([#19773](https://github.com/WordPress/gutenberg/pull/19773)).
+-   Relocated npm package from `create-wordpress-block` to `@wordpress/create-block` ([#19773](https://github.com/WordPress/gutenberg/pull/19773)).
 
 ## 0.5.0 (2020-01-08)
 
