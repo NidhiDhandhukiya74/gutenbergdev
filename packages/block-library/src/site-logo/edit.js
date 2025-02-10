@@ -310,7 +310,7 @@ const SiteLogo = ( {
 
 					<ToolsPanelItem
 						isShownByDefault
-						hasValue={ () => !! isLink }
+						hasValue={ () => ! isLink }
 						label={ __( 'Link image to home' ) }
 						onDeselect={ () => setAttributes( { isLink: false } ) }
 					>
