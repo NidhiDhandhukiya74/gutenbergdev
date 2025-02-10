@@ -312,7 +312,7 @@ const SiteLogo = ( {
 						isShownByDefault
 						hasValue={ () => ! isLink }
 						label={ __( 'Link image to home' ) }
-						onDeselect={ () => setAttributes( { isLink: false } ) }
+						onDeselect={ () => setAttributes( { isLink: true } ) }
 					>
 						<ToggleControl
 							__nextHasNoMarginBottom
